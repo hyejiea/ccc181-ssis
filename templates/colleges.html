@@ -1,0 +1,139 @@
+{% extends "collegelistbase.html" %}
+
+{% block navbar %} 
+<nav class="navbar">
+  <div class="nav-item pull-left">
+  <ul class="navtab">
+    <a class="navbar-brand" href="colleges">
+      <img src="{{url_for('static',filename='cm.png')}}" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+    </a>
+
+      <li class="nav-item" style="font-size:20px"><a href="/" style="color:#2B547E"><strong>Student List</strong></a></li>
+      <li class="nav-item" style="font-size:20px"><a href="/courses" style="color:#2B547E"><strong>Course List</strong></a></li>
+      <li class="nav-item" style="font-size:20px"><a href="/departments" style="color:#2B547E"><strong>Department List</strong></a></li>
+      <li class="nav-item" style="font-size:20px"><a href="/colleges" style="color:#2B547E"><strong>College List</strong></a></li>
+  </ul>
+  </div>
+</div>
+ <form action="/collegesearch" method="POST" class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" id="searchInput" name="searchInput" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
+</nav>
+
+<br>
+<br>
+<br>
+{% endblock %}
+
+{% block body %}
+<body style="background-image: url(https://www.xtrafondos.com/wallpapers/montanas-azules-en-anochecer-3039.jpg);">
+<div class="container">
+<div class="float-left">
+<h5>No of Colleges: {{dataCounts}}</h5>
+</div>
+<div class="float-right"> 
+<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#addModalCollege">Add College</button>
+</div>
+<br>
+<br>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category,message in messages %}
+  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong> 
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<table class="table table-stripped">
+    <tr>
+      <th scope="col">College no.</th>
+      <th scope="col">College Code</th>
+      <th scope="col">College</th>
+      <th scope="col">Actions</th>
+
+    </tr>
+
+
+{% for college in colleges %}
+    <tr>
+      <td>{{ college.0 }}</td>
+      <td>{{ college.1 }}</td>
+      <td>{{ college.2 }}</td>
+      <td>
+      	<a href="/updatecollege/{{college.0}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateModalCollege{{college.0}}">Update</a><!--trigger button for update modal-->
+        <a href="/deletecollege/{{college.0}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete?')">Delete </a>
+      </td>
+    </tr>
+
+
+<div id="updateModalCollege{{college.0}}" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" style="text-align:left"><strong><i>Update College Data with College no.:{{college.0}}</i></strong></h5>
+          <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form action="/updatecollege/{{college.0}}" method="POST">
+            <div class="form-group">
+              <label><strong>College Code:</strong></label>
+              <input type="text" id="collegeCode"  name="collegeCode" class="form-control" value="{{college.1}}" autofocus required>
+            </div>
+            <div class="form-group">
+              <label><strong>College Name:</strong></label>
+              <input type="text" id="collegeName"  name="collegeName" class="form-control" value="{{college.2}}" required>
+            </div>
+            <div class="form-group">
+              <br>
+              <button type="submit" class="btn btn-success">Save Changes</button>
+              <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+{% endfor%}
+
+
+<div id="addModalCollege" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="text-align:left"><strong><i>Add College Data</i></strong></h4>
+          <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form action="{{url_for('insertCollege')}}" method="POST">
+            <div class="form-group">
+              <label><strong>College Code:</strong></label>
+              <input type="text" id="collegeCode"  name="collegeCode" class="form-control" placeholder="Enter College Code" autofocus required>
+            </div>
+            <div class="form-group">
+              <label><strong>College Name:</strong></label>
+              <input type="text" id="collegeName"  name="collegeName" class="form-control" placeholder="Enter College Name" required>
+            </div>
+            <div class="form-group">
+              <br>
+              <button type="submit" class="btn btn-success">Add College</button>
+              <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+</table>
+</div>
+</body>
+{% endblock %}
